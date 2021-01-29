@@ -28,7 +28,6 @@ from PyOBEX import responses
 
 
 class Client:
-
     """Client
     
     client = Client(address, port)
@@ -43,7 +42,6 @@ class Client:
     """
     
     def __init__(self, address, port):
-    
         self.address = address
         self.port = port
         self.max_packet_length = 0xffff
@@ -55,7 +53,6 @@ class Client:
         self.connection_id = None
     
     def _send_headers(self, request, header_list, max_length):
-    
         """Convenience method to add headers to a request and send one or
         more requests with those headers."""
         
@@ -96,7 +93,6 @@ class Client:
         return response
     
     def _collect_parts(self, header_list):
-    
         body = []
         new_headers = []
         for header in header_list:
@@ -111,7 +107,6 @@ class Client:
         return new_headers, b"".join(body)
     
     def set_socket(self, socket):
-    
         """set_socket(self, socket)
         
         Sets the socket to be used for communication to the socket specified.
@@ -132,7 +127,6 @@ class Client:
             self._external_socket = True
     
     def connect(self, header_list = ()):
-    
         """connect(self, header_list = ())
         
         Sends a connection message to the server and returns its response.
@@ -171,7 +165,6 @@ class Client:
         return response
     
     def disconnect(self, header_list = ()):
-    
         """disconnect(self, header_list = ())
         
         Sends a disconnection message to the server and returns its response.
@@ -198,7 +191,6 @@ class Client:
         return response
     
     def put(self, name, file_data, header_list = (), callback = None):
-    
         """put(self, name, file_data, header_list = (), callback = None)
         
         Sends a file with the given name, containing the file_data specified,
@@ -237,7 +229,6 @@ class Client:
             return response
     
     def _put(self, name, file_data, header_list = ()):
-    
         header_list = [
             headers.Name(name),
             headers.Length(len(file_data))
@@ -287,7 +278,6 @@ class Client:
                     return
     
     def get(self, name = None, header_list = (), callback = None):
-    
         """get(self, name = None, header_list = (), callback = None)
         
         Requests the specified file from the server's current directory for
@@ -310,7 +300,6 @@ class Client:
         returned_headers = []
         
         for response in self._get(name, header_list):
-        
             if isinstance(response, responses.Continue) or \
                 isinstance(response, responses.Success):
             
@@ -334,7 +323,6 @@ class Client:
             return self._collect_parts(returned_headers)
     
     def _get(self, name = None, header_list = ()):
-    
         header_list = list(header_list)
         if name is not None:
             header_list = [headers.Name(name)] + header_list
@@ -362,7 +350,6 @@ class Client:
             yield response
     
     def setpath(self, name = "", create_dir = False, to_parent = False, header_list = ()):
-    
         """setpath(self, name = "", create_dir = False, to_parent = False, header_list = ())
         
         Requests a change to the server's current directory for the session
@@ -395,7 +382,6 @@ class Client:
         return response
     
     def delete(self, name, header_list = ()):
-    
         """delete(self, name, header_list = ())
         
         Requests the deletion of the file with the specified name from the
@@ -412,7 +398,6 @@ class Client:
         return self._send_headers(request, header_list, max_length)
     
     def abort(self, header_list = ()):
-    
         """abort(self, header_list = ())
         
         Aborts the current session and returns the server's response.
@@ -433,7 +418,6 @@ class Client:
         return response
 
 class BrowserClient(Client):
-
     """BrowserClient(Client)
     
     client = BrowserClient(address, port)
@@ -450,12 +434,10 @@ class BrowserClient(Client):
     """
     
     def connect(self):
-    
         uuid = b"\xF9\xEC\x7B\xC4\x95\x3C\x11\xd2\x98\x4E\x52\x54\x00\xDC\x9E\x09"
         return Client.connect(self, header_list = [headers.Target(uuid)])
     
     def capability(self):
-    
         """capability(self)
         
         Returns a capability object from the server, or the server's response
@@ -469,7 +451,6 @@ class BrowserClient(Client):
         return data
     
     def listdir(self, name = ""):
-    
         """listdir(self, name = "")
         
         Requests information about the contents of the directory with the
@@ -487,13 +468,9 @@ class BrowserClient(Client):
         return self.get(name, header_list=[headers.Type(b"x-obex/folder-listing", False)])
 
 class SyncClient(Client):
-
     def connect(self, header_list = (headers.Target(b"IRMC-SYNC"),)):
-    
         return Client.connect(self, header_list)
 
 class SyncMLClient(Client):
-
     def connect(self, header_list = (headers.Target(b"SYNCML-SYNC"),)):
-    
         return Client.connect(self, header_list)

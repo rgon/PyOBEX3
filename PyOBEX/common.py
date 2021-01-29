@@ -24,7 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import socket, sys
 
 if hasattr(socket, "AF_BLUETOOTH"):
-
     def Socket():
         return socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM,
                              socket.BTPROTO_RFCOMM)
@@ -54,7 +53,6 @@ import struct
 from PyOBEX import headers
 
 class OBEX_Version:
-
     major = 1
     minor = 0
     
@@ -75,17 +73,14 @@ class Message:
     format = ">BH"
     
     def __init__(self, data = (), header_data = ()):
-    
         self.data = data
         self.header_data = list(header_data)
         self.minimum_length = self.length(Message.format)
     
     def length(self, format):
-    
         return format.count("B") + format.count("H") * 2
     
     def read_data(self, data):
-    
         # Extract the header data from the complete data.
         header_data = data[self.minimum_length:]
         self.read_headers(header_data)
@@ -123,7 +118,6 @@ class Message:
         self.header_data = header_list
     
     def add_header(self, header, max_length):
-    
         if self.minimum_length + len(header.data) > max_length:
             return False
         else:
@@ -148,9 +142,7 @@ class MessageHandler:
     format = ">BH"
     
     if sys.platform == "win32":
-    
         def _read_packet(self, socket_):
-        
             data = b""
             while len(data) < 3:
                 data += socket_.recv(3 - len(data))
@@ -159,9 +151,7 @@ class MessageHandler:
                 data += socket_.recv(length - len(data))
             return type, length, data
     else:
-    
         def _read_packet(self, socket_):
-        
             data = socket_.recv(3, socket.MSG_WAITALL)
             type, length = struct.unpack(self.format, data)
             if length > 3:
@@ -169,7 +159,6 @@ class MessageHandler:
             return type, length, data
     
     def decode(self, socket):
-    
         code, length, data = self._read_packet(socket)
         
         if code in self.message_dict:

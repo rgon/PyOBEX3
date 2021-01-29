@@ -33,9 +33,7 @@ from PyOBEX import responses
 
 
 class Server:
-
     def __init__(self, address = ""):
-    
         self.address = address
         self.max_packet_length = 0xffff
         self.obex_version = OBEX_Version()
@@ -43,7 +41,6 @@ class Server:
     
     def start_service(self, port, name, uuid, service_classes, service_profiles,
                       provider, description, protocols):
-    
         socket = BluetoothSocket(RFCOMM)
         socket.bind((self.address, port))
         socket.listen(1)
@@ -58,13 +55,10 @@ class Server:
         return socket
     
     def stop_service(self, socket):
-    
         stop_advertising(socket)
     
     def serve(self, socket):
-    
         while True:
-        
             connection, address = socket.accept()
             if not self.accept_connection(*address):
                 connection.close()
@@ -73,24 +67,20 @@ class Server:
             self.connected = True
             
             while self.connected:
-            
                 request = self.request_handler.decode(connection)
                 
                 self.process_request(connection, request)
     
     def _max_length(self):
-    
         if hasattr(self, "remote_info"):
             return self.remote_info.max_packet_length
         else:
             return self.max_packet_length
     
     def send_response(self, socket, response, header_list = []):
-    
         ### TODO: This needs to be able to split messages that are longer than
         ### the maximum message length agreed with the other party.
         while header_list:
-        
             if response.add_header(header_list[0], self._max_length()):
                 header_list.pop(0)
             else:
@@ -101,15 +91,12 @@ class Server:
         socket.sendall(response.encode())
     
     def _reject(self, socket):
-    
         self.send_response(socket, responses.Forbidden())
     
     def accept_connection(self, address, port):
-    
         return True
     
     def process_request(self, connection, request):
-    
         """Processes the request from the connection.
         
         This method should be reimplemented in subclasses to add support for
@@ -129,7 +116,6 @@ class Server:
             self._reject(connection)
     
     def connect(self, socket, request):
-    
         if request.obex_version > self.obex_version:
             self._reject(socket)
         
@@ -143,19 +129,15 @@ class Server:
         self.send_response(socket, response)
     
     def disconnect(self, socket, request):
-    
         response = responses.Success()
         self.send_response(socket, response)
         self.connected = False
     
     def put(self, socket, request):
-    
         self._reject(socket)
 
 class BrowserServer(Server):
-
     def start_service(self, port = None):
-    
         if port is None:
             port = 0 #get_available_port(RFCOMM) # deprecated. bind to port zero instead.
         
@@ -174,9 +156,7 @@ class BrowserServer(Server):
             provider, description, protocols)
 
 class PushServer(Server):
-
     def start_service(self, port = None):
-    
         if port is None:
             port = 0 #get_available_port(RFCOMM) # deprecated. bind to port zero instead.
         

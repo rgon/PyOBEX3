@@ -35,7 +35,6 @@ class Header:
             self.data = self.encode(data)
 
 class UnicodeHeader(Header):
-
     def decode(self):
         return str(self.data, encoding = "utf_16_be")
     def encode(self, data):
@@ -43,21 +42,18 @@ class UnicodeHeader(Header):
         return struct.pack(">BH", self.code, len(encoded_data) + 3) + encoded_data
 
 class DataHeader(Header):
-
     def decode(self):
         return self.data
     def encode(self, data):
         return struct.pack(">BH", self.code, len(data) + 3) + data
 
 class ByteHeader(Header):
-
     def decode(self):
         return struct.unpack(">B", self.data)[0]
     def encode(self, data):
         return struct.pack(">BB", self.code, data)
 
 class FourByteHeader(Header):
-
     def decode(self):
         return struct.unpack(">I", self.data)[0]
     def encode(self, data):
