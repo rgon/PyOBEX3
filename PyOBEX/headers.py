@@ -24,9 +24,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import struct
 
 class Header:
+    code = None
+    def encode (self, data): # abstract
+        return data
 
     def __init__(self, data, encoded = False):
-    
         if encoded:
             self.data = data
         else:
@@ -133,13 +135,10 @@ header_dict = {
 }
 
 def header_class(ID):
-
     try:
         return header_dict[ID]
-    
     except KeyError:
-    
         if 0x30 <= (ID & 0x3f) <= 0x3f:
-            return UserDefined
+            return 'UserDefined'
     
     return Header

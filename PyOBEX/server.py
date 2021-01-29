@@ -157,7 +157,7 @@ class BrowserServer(Server):
     def start_service(self, port = None):
     
         if port is None:
-            port = get_available_port(RFCOMM)
+            port = 0 #get_available_port(RFCOMM) # deprecated. bind to port zero instead.
         
         name = "OBEX File Transfer"
         # "E006" also appears to work if used as a service ID. However, 1106
@@ -170,17 +170,15 @@ class BrowserServer(Server):
         description = "File transfer"
         protocols = [OBEX_UUID]
         
-        return Server.start_service(
-            self, port, name, uuid, service_classes, service_profiles,
-            provider, description, protocols
-            )
+        return super().start_service(port, name, uuid, service_classes, service_profiles,
+            provider, description, protocols)
 
 class PushServer(Server):
 
     def start_service(self, port = None):
     
         if port is None:
-            port = get_available_port(RFCOMM)
+            port = 0 #get_available_port(RFCOMM) # deprecated. bind to port zero instead.
         
         name = "OBEX Object Push"
         uuid = PUBLIC_BROWSE_GROUP
@@ -190,7 +188,5 @@ class PushServer(Server):
         description = "File transfer"
         protocols = [RFCOMM_UUID, OBEX_UUID]
         
-        return Server.start_service(
-            self, port, name, uuid, service_classes, service_profiles,
-            provider, description, protocols
-            )
+        return super().start_service(port, name, uuid, service_classes, service_profiles,
+            provider, description, protocols)

@@ -71,7 +71,7 @@ class OBEX_Version:
 
 
 class Message:
-
+    code = None # abstract
     format = ">BH"
     
     def __init__(self, data = (), header_data = ()):
@@ -91,7 +91,6 @@ class Message:
         self.read_headers(header_data)
     
     def read_headers(self, header_data):
-    
         i = 0
         header_list = []
         while i < len(header_data):
@@ -135,13 +134,16 @@ class Message:
         self.header_data = []
     
     def encode(self):
-    
         length = self.minimum_length + sum(map(lambda h: len(h.data), self.header_data))
         args = (Message.format + self.format, self.code, length) + self.data
         return struct.pack(*args) + b"".join(map(lambda h: h.data, self.header_data))
 
 
 class MessageHandler:
+    message_dict = {} # abstract
+    class UnknownMessageClass: # abstract
+        def __init__(self, a, b, c):
+            pass
 
     format = ">BH"
     
